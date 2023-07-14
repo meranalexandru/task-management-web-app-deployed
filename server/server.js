@@ -10,7 +10,19 @@ const usersRoute = require("./routes/usersRoute");
 const projectsRoute = require("./routes/projectsRoute");
 const tasksRoute = require("./routes/tasksRoute");
 
-app.listen(port, () => console.log(`Node server listening on port ${port}`))
+const path = require("path");
+__dirname = path.resolve();
+
 app.use("/api/users", usersRoute);
 app.use("/api/projects", projectsRoute);
 app.use("/api/tasks", tasksRoute);
+
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "/client/build")));
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+    });
+}
+
+app.listen(port, () => console.log(`Node server listening on port ${port}`))
+
